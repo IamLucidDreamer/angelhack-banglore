@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import ProtectedRoute from "./components/protectedRoutes";
+import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from 'react-toastify';
+import Calculator from "./components/calculator";
+import MutualFundListing from "./pages/MutualFundListing";
+import LoginForm from "./pages/Login";
+import SignupForm from "./pages/Signup";
 
-function App() {
+import 'react-toastify/dist/ReactToastify.css';
+
+const App = () => {
+  const queryClient = new QueryClient();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <ToastContainer />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/products" element={<h1>Hello products</h1>} />
+          </Route>
+          <Route path="/" element={<h1>Hello</h1>} />
+          <Route path="/calculator" element={<div><Calculator /> </div>} />
+          <Route path="/mutual-funds" element={<div><MutualFundListing /> </div>} />
+          <Route path="/login" element={<div><LoginForm /> </div>} />
+          <Route path="/signup" element={<div><SignupForm /> </div>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;
