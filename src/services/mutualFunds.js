@@ -11,6 +11,17 @@ export const getMutualFunds = async (queryFilters) => {
   }
 };
 
+export const getMutualFundsPortfolio = async (queryFilters) => {
+  try {
+    const response = await server.get(`/mutual-funds/portfolio`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getMutualFundsFilter = async () => {
   try {
     const response = await server.get("/mutual-funds/filters");
@@ -23,7 +34,11 @@ export const getMutualFundsFilter = async () => {
 export const buyMutualFunds = async (mutualFundId, units) => {
   try {
     const response = await server.post(
-      `/mutual-funds/${mutualFundId}?units=${units}`
+      `/mutual-funds/${mutualFundId}?units=${units}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
     );
     return response.data;
   } catch (error) {

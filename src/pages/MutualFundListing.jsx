@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const MutualFundListing = () => {
+    const navigate = useNavigate();
   const { logout } = useAuth();
   const { data, isLoading, isError } = useQuery("GET_MUTUAL_FUNDS", () =>
     getMutualFunds()
@@ -23,7 +24,10 @@ const MutualFundListing = () => {
           <h1 className="text-3xl font-semibold text-gray-800">
             All Mutual Funds
           </h1>
-          <button onClick={() => logout()}>Logout</button>
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate("/portfolio")}>Portfolio</button>
+            <button onClick={() => logout()}>Logout</button>
+          </div>
         </div>
       </div>
       <div className="flex mt-4 gap-4">
@@ -120,7 +124,7 @@ const MutualFundCard = ({ fundData }) => {
   const [quantity, setQuantity] = useState(0);
 
   const buyMutualFund = async (fundId, quantity) => {
-    toast.promise(buyMutualFunds(fundId, quantity), {
+    toast.promise( async () => await buyMutualFunds(fundId, quantity), {
       pending: "Buying Mutual Fund 🚀",
       success: "Mutual Fund bought successfully 👌",
       error: "There was some error 🤯",
@@ -186,7 +190,7 @@ const MutualFundCard = ({ fundData }) => {
         className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
         onClick={() => {
           isAuthenticated
-            ? buyMutualFund(fundData?.id, quantity)
+            ? buyMutualFund(fundData?.plan_id, quantity)
             : navigate("/login");
         }}
       >

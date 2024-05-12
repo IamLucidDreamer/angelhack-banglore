@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   buyMutualFunds,
   getMutualFunds,
+  getMutualFundsPortfolio,
   //   getMutualFundsFilter,
 } from "../services/mutualFunds";
 import { useQuery } from "react-query";
@@ -10,21 +11,45 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const MutualFundListing = () => {
+const LoanPage = () => {
   const { logout } = useAuth();
-  const { data, isLoading, isError } = useQuery("GET_MUTUAL_FUNDS", () =>
-    getMutualFunds()
+  const [totalLoan, setTotalLoan] = useState(0);
+  const [totalPortfolioValue, setTotalPortfolioValue] = useState(0);
+
+  const { data, isLoading, isError } = useQuery("GET_PORTFOLIO", () =>
+    getMutualFundsPortfolio()
   );
+  useEffect(() => {
+    let totalLoan = 0
+    let totalPortfolioValue = 0
+    for (let i = 0; i < data?.length; i++) {
+      totalLoan = totalLoan + data[i].loan_eligibility
+      totalPortfolioValue= totalPortfolioValue + data[i].amount
+    }
+    setTotalLoan(totalLoan)
+    setTotalPortfolioValue(totalPortfolioValue)
+  }, [data]);
 
   return (
     <div className="bg-white mx-auto max-w-screen-2xl p-4">
       <div className="pb-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-semibold text-gray-800">
-            All Mutual Funds
-          </h1>
+          <h1 className="text-3xl font-semibold text-gray-800">Portfolio</h1>
           <button onClick={() => logout()}>Logout</button>
         </div>
+      </div>
+      <div className="flex items-center justify-between my-12">
+        <div className="text-xl flex flex-col items-center w-44">
+          <h1 className="text-xl">Total Portfolio Value</h1>
+          <h1>{totalPortfolioValue}</h1>
+        </div>
+        <div className="text-xl flex flex-col items-center w-44">
+          <h1 className="text-xl">Total Loan Eligibilty</h1>
+          <h1>{totalLoan}</h1>
+        </div>
+        <button className="w-44 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+          Apply
+        </button>
       </div>
       <div className="flex mt-4 gap-4">
         <div className="w-full flex flex-col gap-6">
@@ -39,9 +64,7 @@ const MutualFundListing = () => {
           ) : (
             <>
               {data?.map((fundData, index) => {
-                return (
-                  <MutualFundCard fundData={fundData} key={fundData?.id} />
-                );
+                return <MutualFundCard data={fundData} key={fundData?.id} />;
               })}
             </>
           )}
@@ -51,7 +74,7 @@ const MutualFundListing = () => {
   );
 };
 
-export default MutualFundListing;
+export default LoanPage;
 
 const getBgColor = (initials) => {
   const colors = [
@@ -114,7 +137,8 @@ const Avatar = ({ name, size = "10" }) => {
   );
 };
 
-const MutualFundCard = ({ fundData }) => {
+const MutualFundCard = ({ data }) => {
+  const fundData = data?.mf_details;
 
   return (
     <a
@@ -156,10 +180,26 @@ const MutualFundCard = ({ fundData }) => {
             <h1>₹{fundData?.nav}</h1>
           </div>
         )}
-          <div>
-            <label className="block mb-2 text-gray-700">Bought Quantity:</label>
-            <h1>₹{fundData?.nav}</h1>
+        {data?.amount && (
+          <div className="text-2xl mx-2">
+            <h1 className="text-lg text-green-600">Amount</h1>
+            <h1>₹{data?.amount}</h1>
           </div>
+        )}
+        {data?.loan_eligibility && (
+          <div className="text-2xl mx-2">
+            <h1 className="text-lg text-green-600 text-nowrap">
+              Loan Eligibility
+            </h1>
+            <h1>₹{data?.loan_eligibility}</h1>
+          </div>
+        )}
+        <div>
+          <div className="block mb-2 text-gray-700 text-nowrap">
+            Bought Quantity:
+          </div>
+          <h1>{data?.number_of_units}</h1>
+        </div>
       </div>
     </a>
   );
