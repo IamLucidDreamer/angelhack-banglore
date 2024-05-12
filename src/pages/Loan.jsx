@@ -115,22 +115,10 @@ const Avatar = ({ name, size = "10" }) => {
 };
 
 const MutualFundCard = ({ fundData }) => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const [quantity, setQuantity] = useState(0);
-
-  const buyMutualFund = async (fundId, quantity) => {
-    toast.promise(buyMutualFunds(fundId, quantity), {
-      pending: "Buying Mutual Fund 🚀",
-      success: "Mutual Fund bought successfully 👌",
-      error: "There was some error 🤯",
-    });
-  };
 
   return (
     <a
       key={fundData?.id}
-      // href={redirectUrls.mutualFundDetail(fundData?.plan_id)}
       className="flex items-center justify-between gap-4 p-8 bg-white border rounded-xl shadow-lg hover:bg-gray-50 transition"
     >
       <div className="flex items-center gap-4">
@@ -168,30 +156,11 @@ const MutualFundCard = ({ fundData }) => {
             <h1>₹{fundData?.nav}</h1>
           </div>
         )}
-        {isAuthenticated && (
           <div>
-            <label className="block mb-2 text-gray-700">Buying Quantity:</label>
-            <input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              required
-              className="w-24 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block mb-2 text-gray-700">Bought Quantity:</label>
+            <h1>₹{fundData?.nav}</h1>
           </div>
-        )}
       </div>
-
-      <button
-        className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-        onClick={() => {
-          isAuthenticated
-            ? buyMutualFund(fundData?.id, quantity)
-            : navigate("/login");
-        }}
-      >
-        Buy
-      </button>
     </a>
   );
 };

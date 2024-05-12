@@ -10,11 +10,12 @@ export const signUp = async (username, password) => {
   }
 };
 
-export const login = async (username, password) => {
+export const login = async (username, password, loginUser) => {
   try {
     const response = await server.post(`/token`, { username, password });
     const loginData = response.data;
     localStorage.setItem("token", loginData.access_token);
+    loginUser(true);
     return response.data;
   } catch (error) {
     console.error(error);

@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { login } from "../services/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { login : loginUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,7 +14,7 @@ const LoginForm = () => {
     e.preventDefault();
     toast.promise(
       async () => {
-        await login(email, password);
+        await login(email, password, loginUser);
         navigate("/mutual-funds");
       },
       {
